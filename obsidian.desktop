@@ -1,0 +1,11 @@
+[Desktop Entry]
+Name=Obsidian
+GenericName=Sharpen your thinking
+StartupWMClass=obsidian
+Exec=~/.local/bin/obsidian --no-sandbox
+Icon=~/.icons/obsidian.svg
+Terminal=false
+Type=Application
+Categories=Utility;Office
+MimeType=application/x-md;x-scheme-handler/obsidian;
+X-Desktop-File-Install-Version=0.22
