@@ -14,6 +14,7 @@ chmod +x $BIN_DIR/obsidian
 cp "$DIR"/obsidian.desktop ~/.local/share/applications/obsidian.desktop
 cp "$DIR"/obsidian.svg ~/.local/share/icons/obsidian.svg
 
+sed -i "s|BIN_DIR|$BIN_DIR|g" ~/.local/share/applications/obsidian.desktop
 sed -i "s|HOME|$HOME|" ~/.local/share/applications/obsidian.desktop
 update-desktop-database ~/.local/share/applications
 
