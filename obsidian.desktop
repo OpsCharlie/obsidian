@@ -2,7 +2,7 @@
 Name=Obsidian
 GenericName=Sharpen your thinking
 StartupWMClass=obsidian
-Exec=HOME/.local/bin/obsidian --no-sandbox
+Exec=BIN_DIR/obsidian --no-sandbox
 Icon=HOME/.local/share/icons/obsidian.svg
 Terminal=false
 Type=Application
