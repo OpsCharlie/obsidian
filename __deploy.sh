@@ -7,7 +7,7 @@ BIN_DIR=~/.local/bin
 
 DIR=$(dirname "$(readlink -f "$0")")
 
-curl -s https://api.github.com/repos/obsidianmd/obsidian-releases/releases/latest | grep -P 'browser_download_url(?!.*arm64).*AppImage' | cut -d '"' -f 4 | xargs curl -L -o $BIN_DIR/obsidian
+curl -# https://api.github.com/repos/obsidianmd/obsidian-releases/releases/latest | grep -P 'browser_download_url(?!.*arm64).*AppImage' | cut -d '"' -f 4 | xargs curl -L -o $BIN_DIR/obsidian
 
 chmod +x $BIN_DIR/obsidian
 
