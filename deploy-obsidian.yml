@@ -1,4 +1,6 @@
 ---
+# vim: set ft=yaml.ansible:
+
 - name: Deploy Obsidian
   hosts: localhost
   connection: local
@@ -19,7 +21,7 @@
       ansible.builtin.uri:
         url: https://api.github.com/repos/obsidianmd/obsidian-releases/releases/latest
         method: GET
-        return_content: yes
+        return_content: true
       register: obsidian_release
 
     - name: Extract AppImage URL from GitHub API response
