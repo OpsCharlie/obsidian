@@ -1,0 +1,78 @@
+---
+- name: Deploy Obsidian
+  hosts: localhost
+  connection: local
+  vars:
+    bin_dir: "{{ ansible_user_dir }}/.local/bin"
+    desktop_dir: "{{ ansible_user_dir }}/.local/share/applications"
+    icons_dir: "{{ ansible_user_dir }}/.local/share/icons"
+    script_dir: "{{ playbook_dir }}"
+
+  tasks:
+    - name: Create bin directory
+      ansible.builtin.file:
+        path: "{{ bin_dir }}"
+        state: directory
+        mode: '0755'
+
+    - name: Get latest Obsidian AppImage download URL
+      ansible.builtin.uri:
+        url: https://api.github.com/repos/obsidianmd/obsidian-releases/releases/latest
+        method: GET
+        return_content: yes
+      register: obsidian_release
+
+    - name: Extract AppImage URL from GitHub API response
+      ansible.builtin.set_fact:
+        appimage_url: >-
+          {{
+            obsidian_release.json |
+            json_query('assets[?contains(name, `AppImage`) && !contains(name, `arm64`)].browser_download_url | [0]')
+          }}
+
+    - name: Download Obsidian AppImage
+      ansible.builtin.get_url:
+        url: "{{ appimage_url }}"
+        dest: "{{ bin_dir }}/obsidian"
+        mode: '0755'
+
+    - name: Create desktop applications directory
+      ansible.builtin.file:
+        path: "{{ desktop_dir }}"
+        state: directory
+        mode: '0755'
+
+    - name: Create icons directory
+      ansible.builtin.file:
+        path: "{{ icons_dir }}"
+        state: directory
+        mode: '0755'
+
+    - name: Copy icon file
+      ansible.builtin.copy:
+        src: "{{ script_dir }}/obsidian.svg"
+        dest: "{{ icons_dir }}/obsidian.svg"
+        mode: '0644'
+
+    - name: Create desktop file with templated content
+      ansible.builtin.copy:
+        dest: "{{ desktop_dir }}/obsidian.desktop"
+        mode: '0644'
+        content: |
+          [Desktop Entry]
+          Name=Obsidian
+          GenericName=Sharpen your thinking
+          StartupWMClass=obsidian
+          Exec={{ bin_dir }}/obsidian --no-sandbox
+          Icon={{ ansible_user_dir }}/.local/share/icons/obsidian.svg
+          Terminal=false
+          Type=Application
+          Categories=Utility;Office
+          MimeType=application/x-md;x-scheme-handler/obsidian;
+          X-Desktop-File-Install-Version=0.22
+
+    - name: Update desktop database
+      ansible.builtin.command:
+        cmd: update-desktop-database "{{ desktop_dir }}"
+      register: desktop_db_update
+      changed_when: desktop_db_update.rc == 0
